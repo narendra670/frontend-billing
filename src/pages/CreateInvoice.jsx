@@ -124,7 +124,11 @@ const CreateInvoice = () => {
         try {
             const res = await axios.get(`/api/customers?mobile=${customer.mobile}`);
             if (res.data) {
-                setCustomer(res.data);
+                setCustomer({
+                    name: res.data.name || '',
+                    mobile: res.data.mobile || '',
+                    address: res.data.address || '',
+                });
                 toast.success('Customer found!');
             }
         } catch (err) {
@@ -134,7 +138,11 @@ const CreateInvoice = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!customer.name || items.some(item => !item.medicineName || item.price <= 0)) {
+        if (!customer.name || !customer.mobile) {
+            toast.error("Please fill customer name and mobile");
+            return;
+        }
+        if (items.some(item => !item.medicineName || item.price <= 0)) {
             toast.error("Please fill all required fields (Medicine + Price)");
             return;
         }
